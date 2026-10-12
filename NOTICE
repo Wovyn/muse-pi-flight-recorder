@@ -1,0 +1,9 @@
+muse-pi-flight-recorder
+Copyright 2026 Wovyn, LLC
+
+This product is a Wovyn R&D project. Project concept, requirements, and
+specifications by Scott; implementation by MuseCell-1.
+
+No third-party code is vendored in this repository at this time. The web UI
+(planned) will use only Python standard library and hand-written HTML/CSS/JS
+
