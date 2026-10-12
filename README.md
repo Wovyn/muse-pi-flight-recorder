@@ -28,15 +28,31 @@ implementation: a thin wrapper installed around the daemon's dispatch funnel
 ## Repo layout
 
 - `recorder/audit.py` — zero-token audit wrapper (current on-Pi implementation)
-- `recorder/` — (planned) listener subscribing to the upstream hook, rollup
-  aggregator
+- `recorder/rollup.py` — rollup aggregator: builds one small JSON per day
+  from the raw JSONL log + the markdown daily report
+- `recorder/` — (planned) listener subscribing to the upstream hook
 - `reporter/` — (planned) daily report generator
 - `web/` — (planned) stdlib-only web server + vanilla-JS heatmap UI (port 8081)
 - `install.sh` — installer used for the current on-Pi deployment
+- `data/` — runtime data, not committed: `data/reports/YYYY-MM-DD.md`
+  (synced daily reports) and `data/rollups/rollup-YYYY-MM-DD.json`
+
+## Data pipeline
+
+1. The daemon's audit wrapper appends to
+   `~/.local/share/muse-audit/commands-YYYY-MM-DD.jsonl` (90-day retention).
+2. The daily-report job (~7:47am Scott's time) generates the markdown report,
+   syncs it to `data/reports/` on the Pi, and runs
+   `python3 recorder/rollup.py YYYY-MM-DD`.
+3. `rollup.py` parses the report's task list (titles, what/why, outcomes,
+   entry ranges) and combines it with JSONL counts into
+   `data/rollups/rollup-YYYY-MM-DD.json` — the fast data source for the web UI.
+4. The web UI serves the heatmap from the rollups and renders day reports
+   from the synced markdown + rollup entry ranges.
 
 ## Status
 
-v0.1.0 (planned): repo scaffolding + current recorder code. See
+v0.2.0 (planned): rollup aggregator + report sync pipeline. See
 [CHANGELOG.md](CHANGELOG.md).
 
 ## Conventions

@@ -1,6 +1,6 @@
 __pycache__/
-*.py#
-downloads/
+*.py[cod]
 *.log
 *.pid
 .DS_Store
+data/
