@@ -9,7 +9,7 @@ Automatically logs every `system.run` command, `file.read`, and `file.write`
 (file paths and byte counts — never file contents) issued on Muse-Pi-1, with
 secret redaction applied before records are written. A daily job turns the raw
 log into a readable markdown report of higher-level tasks with drill-down to
-exact commands. A web UI (planned) presents a calendar heatmap of activity, a
+exact commands. A web UI presents a calendar heatmap of activity, a
 recent-operations list, and per-day reports.
 
 ## Architecture: two repos
@@ -32,7 +32,12 @@ implementation: a thin wrapper installed around the daemon's dispatch funnel
   from the raw JSONL log + the markdown daily report
 - `recorder/` — (planned) listener subscribing to the upstream hook
 - `reporter/` — (planned) daily report generator
-- `web/` — (planned) stdlib-only web server + vanilla-JS heatmap UI (port 8081)
+- `web/` — stdlib-only Python web server (`web/server.py`) + vanilla
+  HTML/CSS/JS heatmap UI (`web/static/`). Binds 0.0.0.0, port from
+  `RECORDER_PORT` (default 8081). Launch with `./start.sh` — no sudo, no
+  systemd (same convention as the HUD); idempotent, writes a pidfile and log.
+  APIs: `GET /api/meta`, `GET /api/activity?days=365`,
+  `GET /api/day/YYYY-MM-DD`, `GET /api/recent`.
 - `install.sh` — installer used for the current on-Pi deployment
 - `data/` — runtime data, not committed: `data/reports/YYYY-MM-DD.md`
   (synced daily reports) and `data/rollups/rollup-YYYY-MM-DD.json`
@@ -52,8 +57,8 @@ implementation: a thin wrapper installed around the daemon's dispatch funnel
 
 ## Status
 
-v0.2.0 (planned): rollup aggregator + report sync pipeline. See
-[CHANGELOG.md](CHANGELOG.md).
+v0.3.0: web UI — GitHub-style heatmap, day drill-down, recent activity.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Conventions
 
