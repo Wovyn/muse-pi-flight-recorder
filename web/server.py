@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Flight-recorder web UI server (muse-pi-flight-recorder v0.3.0).
+"""Flight-recorder web UI server (muse-pi-flight-recorder v0.3.1).
 
 Serves the GitHub-style activity heatmap UI (web/static/) plus JSON APIs
 backed by data/rollups/ and data/reports/:
@@ -89,7 +89,7 @@ def full_task(day, t):
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "flight-recorder-web/0.3.0"
+    server_version = "flight-recorder-web/0.3.1"
 
     def _send(self, code, body, ctype="application/json"):
         data = body.encode("utf-8") if isinstance(body, str) else body

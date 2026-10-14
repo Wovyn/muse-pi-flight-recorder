@@ -57,7 +57,7 @@ implementation: a thin wrapper installed around the daemon's dispatch funnel
 
 ## Status
 
-v0.3.0: web UI — GitHub-style heatmap, day drill-down, recent activity.
+v0.3.1: web UI - GitHub-style heatmap, day drill-down, recent activity; responsive refinements (fluid cells, operations color floor, legend/hint always visible).
 See [CHANGELOG.md](CHANGELOG.md).
 
 ## Conventions

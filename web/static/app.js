@@ -36,6 +36,19 @@ function taskBlock(t) {
 }
 
 // ---------- heatmap ----------
+// Size day cells so the year grid exactly fills the available width.
+// Returns the column pitch in px. Below a 10px minimum cell size the grid
+// keeps scrolling instead of shrinking further.
+function fitCells(nWeeks) {
+  const cm = document.querySelector('.cal-main');
+  const wd = document.querySelector('.wdays');
+  const avail = cm.clientWidth - (wd ? wd.offsetWidth + 6 : 32);
+  let cell = (avail - 3 * (nWeeks - 1)) / nWeeks;
+  if (cell < 10) cell = 10;
+  cm.closest('.card').style.setProperty('--cell', cell + 'px');
+  return cell + 3;
+}
+
 function buildGrid() {
   const weeksEl = $("weeks"), monthsEl = $("months");
   weeksEl.innerHTML = ""; monthsEl.innerHTML = "";
@@ -52,6 +65,7 @@ function buildGrid() {
   days.forEach(d => cells.push(d));
   while (cells.length % 7 !== 0) cells.push(null);
   const nWeeks = cells.length / 7;
+  const pitch = fitCells(nWeeks);
 
   cells.forEach(d => {
     const el = document.createElement("div");
@@ -74,19 +88,24 @@ function buildGrid() {
       if (d && d.getDate() === 1 && w - lastLabel > 3) {
         const s = document.createElement("span");
         s.textContent = MONTHS[d.getMonth()];
-        s.style.left = (w * 15) + "px";
+        s.style.left = (w * pitch) + "px";
         monthsEl.appendChild(s); lastLabel = w; break;
       }
     }
   }
+  // On narrow screens the grid scrolls horizontally: default to the newest days.
+  const cm = document.querySelector(".cal-main");
+  if (cm) cm.scrollLeft = cm.scrollWidth;
   paint();
 }
 
 function paint() {
   document.querySelectorAll('.day[data-date]').forEach(el => {
     const a = dayMap.get(el.dataset.date);
-    const lv = mode === "tasks" ? level(a ? a.task_count : 0)
-                               : levelOps(a ? a.op_count : 0);
+    const t = a ? a.task_count : 0, o = a ? a.op_count : 0;
+    // Ops are a finer-grained count of the same activity, so the ops view is
+    // floored at the task color: toggling to ops can hold or darken, never lighten.
+    const lv = mode === "tasks" ? level(t) : Math.max(levelOps(o), level(t));
     el.className = "day l" + lv + (el.dataset.date === selectedDate ? " selected" : "");
   });
 }
@@ -183,3 +202,9 @@ $("report-close").addEventListener("click", closeReport);
     $("recent").innerHTML = '<li class="err">Could not reach the recorder API.</li>';
   }
 })();
+
+let _rzT = null;
+window.addEventListener("resize", () => {
+  clearTimeout(_rzT);
+  _rzT = setTimeout(() => { buildGrid(); }, 150);
+});

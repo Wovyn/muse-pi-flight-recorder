@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-10-14
+
+### Fixed
+- Heatmap layout: fluid day-cell sizing fills the container width (min 10px,
+  then scrolls) so the full calendar fits laptop browsers with no horizontal
+  scrollbar and no whitespace on wide desktops; month labels use the same
+  computed pitch; grid rebuilds debounced on resize. Content max-width 1040px.
+- Operations view: day color floored at the tasks-view color, so switching
+  from tasks to operations never lightens a day (operations are the
+  finer-grained count).
+- Narrow screens: heatmap opens scrolled to the newest days on the right.
+- Legend and hint moved out of the horizontal scroll container so they stay
+  visible on phones; legend swatches track the fluid cell size.
+
 ## [0.3.0] - 2026-10-11
 
 ### Added
